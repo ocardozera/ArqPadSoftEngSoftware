@@ -1,8 +1,9 @@
 package br.edu.ifpr.paranavai.model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Agenda {
 
@@ -50,9 +51,18 @@ public class Agenda {
         contatoAdd.setEmail(email);
         contatoAdd.setTelefone(numero);
 
-        listaContatos.add(contatoAdd);
+        Matcher matcher = validaEmail(email);
 
-        listaContatos.contains(contatoAdd.getNome().equals(nome));
+        listaContatos.add(contatoAdd);
+        if (contatoAdd.getNome() != null && !contatoAdd.getNome().isEmpty()){
+            listaContatos.contains(contatoAdd.getNome().equals(nome));
+        } else if (contatoAdd.getTelefone() != null && !contatoAdd.getTelefone().isEmpty()) {
+            listaContatos.contains(contatoAdd.getTelefone().equals(numero));
+        } else if (contatoAdd.getEmail() != null && !contatoAdd.getEmail().isEmpty() && matcher.matches()) {
+            listaContatos.contains(contatoAdd.getEmail().equals(email));
+        } else {
+            return listaContatos = null;
+        }
 
         return listaContatos;
     }
@@ -63,6 +73,16 @@ public class Agenda {
         List<Contato> listaContatos = new ArrayList<>();
         listaContatos.remove(contato);
 
+    }
+
+    public static Matcher validaEmail(String email) {
+        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+
+        Pattern pattern = Pattern.compile(regex);
+
+        Matcher matcher = pattern.matcher(email);
+
+        return matcher;
     }
 }
 
